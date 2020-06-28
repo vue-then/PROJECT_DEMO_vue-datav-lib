@@ -1,4 +1,4 @@
-// 只有export可以触发tree shaking机制
+// es6只有export可以触发tree shaking机制。commonjs只有exports可以触发tree shaking机制
 
 export const a = 1
 export const b = 2

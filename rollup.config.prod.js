@@ -1,9 +1,13 @@
 const path = require('path')
 const resolve = require('rollup-plugin-node-resolve') // 可以将第三方模块打包进项目里，这样即使不安装第三方模块也能使用
+const commonjs = require('rollup-plugin-commonjs') // 可以将commonjs模块打包
+const babel = require('rollup-plugin-babel') // 将es6语法转es5
+const json = require('rollup-plugin-json') // 打包json文件
+const { terser } = require('rollup-plugin-terser') // 打包压缩
 
 const inputPath = path.resolve(__dirname, './src/index.js')
-const outputUmdPath = path.resolve(__dirname, './dist/imooc.davav.js')
-const outputEsPath = path.resolve(__dirname, './dist/imooc.davav.es.js')
+const outputUmdPath = path.resolve(__dirname, './dist/imooc.davav.min.js')
+const outputEsPath = path.resolve(__dirname, './dist/imooc.davav.es.min.js')
 
 module.exports = {
   input: inputPath,
@@ -20,6 +24,13 @@ module.exports = {
     }
   ],
   plugins: [
-    resolve()
-  ]
+    resolve(),
+    commonjs(),
+    babel({
+      exclude: 'node_modules/**'
+    }),
+    json(),
+    terser()
+  ],
+  external: ['vue'] // 外部引用模块。即使有resolve插件也会被引入到外部
 }
