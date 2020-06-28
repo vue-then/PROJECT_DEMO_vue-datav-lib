@@ -1,0 +1,16 @@
+{
+  "name": "datav-libs-dev",
+  "version": "1.0.0",
+  "description": "慕课网数据可视化组件库",
+  "main": "index.js",
+  "scripts": {
+    "dev": "rollup -wc rollup.config.dev.js",
+    "build": "rollup -c rollup.config.prod.js"
+  },
+  "keywords": [],
+  "author": "ifreeOvO",
+  "license": "ISC",
+  "devDependencies": {
+    "rollup": "^2.18.1"
+  }
+}
