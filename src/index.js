@@ -1,3 +1,5 @@
-console.log('哈哈..')
+import { random} from './plugin'
 
-export default {}
+console.log('哈哈..', random)
+
+export default random
