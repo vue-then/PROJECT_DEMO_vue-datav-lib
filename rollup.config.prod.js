@@ -8,8 +8,8 @@ const vue = require('rollup-plugin-vue')
 const postcss = require('rollup-plugin-postcss') // 支持css预处理
 
 const inputPath = path.resolve(__dirname, './src/index.js')
-const outputUmdPath = path.resolve(__dirname, './dist/imooc.davav.min.js')
-const outputEsPath = path.resolve(__dirname, './dist/imooc.davav.es.min.js')
+const outputUmdPath = path.resolve(__dirname, './dist/imooc.datav.min.js')
+const outputEsPath = path.resolve(__dirname, './dist/imooc.datav.es.min.js')
 
 module.exports = {
   input: inputPath,

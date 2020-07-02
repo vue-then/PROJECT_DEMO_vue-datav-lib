@@ -2,13 +2,21 @@
   "name": "datav-libs-dev",
   "version": "1.0.0",
   "description": "慕课网数据可视化组件库",
-  "main": "index.js",
+  "main": "dist/imooc.datav.js",
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "dev": "rollup -wc rollup.config.dev.js",
-    "build": "rollup -c rollup.config.dev.js",
-    "build:prod": "rollup -c rollup.config.prod.js"
+    "build": "npm run lint && rollup -c rollup.config.dev.js",
+    "build:prod": "npm run lint && rollup -c rollup.config.prod.js",
+    "lint": "eslint ./src"
   },
-  "keywords": [],
+  "keywords": [
+    "vue",
+    "datav"
+  ],
   "author": "ifreeOvO",
   "license": "ISC",
   "devDependencies": {
@@ -16,6 +24,8 @@
     "@babel/node": "^7.10.3",
     "@babel/preset-env": "^7.10.3",
     "@vue/compiler-sfc": "^3.0.0-beta.15",
+    "eslint": "^7.3.1",
+    "eslint-plugin-vue": "^6.2.2",
     "rollup": "^2.18.1",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
