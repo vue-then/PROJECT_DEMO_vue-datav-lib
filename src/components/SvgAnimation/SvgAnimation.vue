@@ -264,6 +264,151 @@
         </polygon>
       </svg>
     </div>
+
+    <!-- 轨迹动画 -->
+    <div class="container">
+      <svg
+        width="200"
+        height="200"
+      >
+        <rect
+          x="0"
+          y="0"
+          fill="red"
+          width="10"
+          height="10"
+        >
+          <animateMotion
+            path="M10 10 L110 10 L110 110 L10 110 Z"
+            dur="5s"
+            rotate="0"
+            fill="freeze"
+            repeatCount="2"
+          ></animateMotion>
+        </rect>
+        <path
+          d="M10 10 L110 10 L110 110 L10 110 Z"
+          fill="none"
+          stroke="pink"
+        ></path>
+      </svg>
+    </div>
+
+    <div class="container">
+      <svg
+        width="200"
+        height="200"
+      >
+        <rect
+          x="0"
+          y="0"
+          fill="red"
+          width="10"
+          height="10"
+        >
+          <!-- 这里如果写成begin="0"，那么只会执行一次来回 -->
+          <animateMotion
+            id="forward-rect"
+            path="M10 10 L110 10 L110 110 L10 110"
+            dur="2s"
+            rotate="0"
+            fill="freeze"
+            begin="0; back-rect.end + 0.5s"
+          ></animateMotion>
+          <!-- begin="forward-reat.end" 获取到上个动画的结束时间-->
+          <animateMotion
+            id="back-rect"
+            path="M10 110 L110 110 L110 10 L10 10"
+            dur="2s"
+            rotate="0"
+            fill="freeze"
+            begin="forward-rect.end + 0.5s"
+          ></animateMotion>
+          <animate
+            id='red-to-blue'
+            attributeName="fill"
+            attributeType="XML"
+            from="red"
+            to="blue"
+            dur="2s"
+            fill="freeze"
+            begin="0; blue-to-red.end + 0.5s"
+          ></animate>
+          <animate
+            id='blue-to-red'
+            attributeName="fill"
+            attributeType="XML"
+            from="blue"
+            to="red"
+            dur="2s"
+            fill="freeze"
+            begin="red-to-blue.end + 0.5s"
+          ></animate>
+        </rect>
+        <path
+          d="M10 10 L110 10 L110 110 L10 110"
+          fill="none"
+          stroke="pink"
+        ></path>
+      </svg>
+    </div>
+
+    <div class="container">
+      <svg
+        viewBox="0 0 200 200"
+        width="200"
+        height="200"
+      >
+        <g id="rect1">
+          <rect
+            x="0"
+            y="0"
+            rx="0"
+            ry="0"
+            width="100"
+            height="100"
+            fill="red"
+          >
+            <animate
+              attributeType="XML"
+              attributeName="fill"
+              from="red"
+              to="green"
+              begin="rect1.click"
+              dur="2s"
+              fill="freeze"
+            />
+          </rect>
+        </g>
+        <animateTransform
+          attributeType="XML"
+          attributeName="transform"
+          type="translate"
+          from="0, 0"
+          to="50, 50"
+          begin="rect1.click"
+          dur="2s"
+          fill="freeze"
+        />
+        <rect
+          x="0"
+          y="100"
+          width="100"
+          height="100"
+          fill="blue"
+        >
+          <animate
+            attributeType="XML"
+            attributeName="fill"
+            from="blue"
+            to="green"
+            begin="rect1.click"
+            dur="2s"
+            fill="freeze"
+          />
+        </rect>
+      </svg>
+    </div>
   </div>
 </template>
 
@@ -291,7 +436,10 @@ export default {
 .container {
   width: 500px;
   margin: 0 auto 20px;
-  border: 1px solid #000;
+}
+
+svg {
+  border: 1px solid green;
 }
 
 .circle {
