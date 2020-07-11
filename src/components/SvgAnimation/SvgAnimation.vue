@@ -148,18 +148,120 @@
 
     <!-- smil动画 -->
     <div class="container">
-      <svg width="200" height="200">
-        <rect x="0" y="0" fill="red" width="100" height="50">
+      <svg
+        width="200"
+        height="200"
+      >
+        <rect
+          x="0"
+          y="0"
+          fill="red"
+          width="100"
+          height="50"
+        >
           <!-- 
             写上需要实现动画的属性
             to指属性值变到某个值
             begin动画从几秒后开始
           -->
-          <set attributeName="x" attributeType="XML" to="10" begin="1s"></set>
-          <set attributeName="y" attributeType="XML" to="20" begin="2s"></set>
-          <set attributeName="fill" attributeType="XML" to="blue" begin="3s"></set>
+          <set
+            attributeName="x"
+            attributeType="XML"
+            to="10"
+            begin="1s"
+          ></set>
+          <set
+            attributeName="y"
+            attributeType="XML"
+            to="20"
+            begin="2s"
+          ></set>
+          <set
+            attributeName="fill"
+            attributeType="XML"
+            to="blue"
+            begin="3s"
+          ></set>
         </rect>
 
+      </svg>
+    </div>
+
+    <div class="container">
+      <svg
+        width="200"
+        height="200"
+      >
+        <circle
+          cx="0"
+          cy="0"
+          r="30"
+          fill="blue"
+          stroke="#333"
+          stroke-width="1"
+        >
+          <!-- 
+            attributeType有两个值XML和css
+            如果用来做动画的属性来自dom用XML
+            否则用css
+          -->
+          <!-- 
+            fill="freeze"表示动画结束停留原来的位置。和css animte的forwards相似
+            fill="remove"表示动画结束回到初始位置
+          -->
+          <animate
+            attributeName="cx"
+            attributeType="XML"
+            from="0"
+            to="100"
+            dur="5s"
+            repeatCount="1"
+            fill="freeze"
+          ></animate>
+          <animate
+            attributeName="cy"
+            attributeType="XML"
+            from="0"
+            to="50"
+            dur="5s"
+            repeatCount="1"
+            fill="freeze"
+          ></animate>
+          <!-- type值需要变换的属性 -->
+          <animateTransform
+            attributeName="transform"
+            attributeType="XML"
+            begin="0"
+            dur="3s"
+            type="scale"
+            from="1"
+            to="2"
+            repeatCount="indefinite"
+          >
+          </animateTransform>
+        </circle>
+      </svg>
+    </div>
+
+    <div class="container">
+      <svg
+        width="400"
+        height="400"
+      >
+        <polygon
+          points="30 30 70 30 90 70 10 70"
+          fill="#fcc"
+          stroke="black"
+        >
+          <animate
+            attributeName="points"
+            attributeType="XML"
+            to="50 30 70 50 50 90 30 50"
+            dur="5s"
+            fill="freeze"
+            repeatCount="1"
+          />
+        </polygon>
       </svg>
     </div>
   </div>
