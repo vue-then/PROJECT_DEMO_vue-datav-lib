@@ -31,7 +31,7 @@
         </radialGradient>
         <mask id="fly-box-mask">
           <circle
-            r="150"
+            :r="starLength"
             cx="0"
             cy="0"
             fill="url(#radial-gradient)"
@@ -48,12 +48,12 @@
       <use
         href="#fly-box-path"
         stroke-width="1"
-        stroke="#235fa7"
+        :stroke="lineColor"
       ></use>
       <use
         href="#fly-box-path"
         stroke-width="3"
-        stroke="#4fd2dd"
+        :stroke="starColor"
         mask="url(#fly-box-mask)"
       ></use>
     </svg>
@@ -73,7 +73,19 @@ export default {
     duration: {
       type: [Number, String],
       default: 3
-    }
+    },
+    lineColor: {
+      type: String,
+      default: '#235fa7'
+    },
+    starColor: {
+      type: String,
+      default: '#4fd2dd'
+    },
+    starLength: {
+      type: [Number, String],
+      default: 50
+    },
   },
 
   setup(ctx) {
@@ -120,6 +132,8 @@ export default {
   .imooc-fly-box-content {
     height: 100%;
     width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
   }
 }
 </style>
