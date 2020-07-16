@@ -6,12 +6,12 @@
     >
       <defs>
         <path
-          id="fly-box-path"
+          :id="pathId"
           :d="path"
           fill="none"
         ></path>
         <radialGradient
-          id="radial-gradient"
+          :id="radialGradientId"
           r="50%"
           cx="50%"
           cy="50%"
@@ -29,12 +29,12 @@
             stop-opacity="0"
           ></stop>
         </radialGradient>
-        <mask id="fly-box-mask">
+        <mask :id="maskId">
           <circle
             :r="starLength"
             cx="0"
             cy="0"
-            fill="url(#radial-gradient)"
+            :fill="`url(#${radialGradientId})`"
           >
             <animateMotion
               :dur="dur"
@@ -46,15 +46,15 @@
         </mask>
       </defs>
       <use
-        href="#fly-box-path"
+        :href="`#${pathId}`"
         stroke-width="1"
         :stroke="lineColor"
       ></use>
       <use
-        href="#fly-box-path"
+        :href="`#${pathId}`"
         stroke-width="3"
         :stroke="starColor"
-        mask="url(#fly-box-mask)"
+        :mask="`url(#${maskId})`"
       ></use>
     </svg>
     <div class="imooc-fly-box-content">
@@ -65,6 +65,7 @@
 
 <script type="text/ecmascript-6">
 import { computed, ref, onMounted, getCurrentInstance } from 'vue'
+import {v4 as uuidv4} from 'uuid'
 
 export default {
   name: 'ImoocFlyBox',
@@ -89,9 +90,13 @@ export default {
   },
 
   setup(ctx) {
+    const uuid= uuidv4()
     const width = ref(0)
     const height = ref(0)
     const refName= 'imoocFlyBox'
+    const pathId= `${refName}-${uuid}`
+    const radialGradientId= `${refName}-gradient-${uuid}`
+    const maskId= `${refName}-mask-${uuid}`
     const dur = computed(() => `${ctx.duration}s`)
     const path = computed(() => `M5 5 L${width.value-5} 5 L${width.value-5} ${height.value-5} L5 ${height.value-5} Z`)
 
@@ -111,7 +116,10 @@ export default {
       width,
       height,
       refName,
-      path
+      path,
+      pathId,
+      radialGradientId,
+      maskId
     }
   }
 }
