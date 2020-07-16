@@ -412,16 +412,125 @@
 
     <!-- 蒙版 -->
     <div class="container">
-      <svg width="400" height="400">
+      <svg
+        width="400"
+        height="400"
+      >
         <defs>
           <mask id="test-mask">
             <!-- 填充色 -->
-            <rect x="5" y="5" width="390" height="390" fill="green"></rect>
-            <circle r="50" cx="50" cy="50"></circle>
+            <rect
+              x="5"
+              y="5"
+              width="390"
+              height="390"
+              fill="green"
+            ></rect>
+            <circle
+              r="50"
+              cx="50"
+              cy="50"
+            ></circle>
           </mask>
         </defs>
-        <rect x="5" y="5" width="390" height="390" fill="red"></rect>
-        <rect x="5" y="5" width="390" height="390" fill="blue" mask="url(#test-mask)"></rect>
+        <rect
+          x="5"
+          y="5"
+          width="390"
+          height="390"
+          fill="red"
+        ></rect>
+        <rect
+          x="5"
+          y="5"
+          width="390"
+          height="390"
+          fill="blue"
+          mask="url(#test-mask)"
+        ></rect>
+      </svg>
+    </div>
+
+    <!-- 渐变色 -->
+    <div class="container bg-gray">
+      <svg
+        width="400"
+        height="400"
+      >
+        <defs>
+          <mask id="test-mask">
+            <!-- 填充色 -->
+            <rect
+              x="5"
+              y="5"
+              width="390"
+              height="390"
+              fill="green"
+            ></rect>
+            <circle
+              r="50"
+              cx="50"
+              cy="50"
+            ></circle>
+          </mask>
+          <linearGradient id="test-linear-gradient">
+            <!-- stop-opacity控制透明度 -->
+            <stop
+              offset="0%"
+              stop-color="red"
+              stop-opacity="1"
+            ></stop>
+            <stop
+              offset="50%"
+              stop-color="green"
+            ></stop>
+            <stop
+              offset="100%"
+              stop-color="blue"
+              stop-opacity="0"
+            ></stop>
+          </linearGradient>
+          <!-- cx cy控制内圈开始辐射的范围,fx,fy控制外圈开始辐射的范围, 外圈是朝内圈坐标点投射 -->
+          <radialGradient
+            id="test-radial-gradient"
+            r="50%"
+            cx="50%"
+            cy="50%"
+            fx="50%"
+            fy="50%"
+          >
+            <!-- <stop
+              offset="0%"
+              stop-color="white"
+            ></stop>
+            <stop
+              offset="10%"
+              stop-color="yellow"
+            ></stop>
+            <stop
+              offset="95%"
+              stop-color="red"
+              stop-opacity="1"
+            ></stop> -->
+            <stop
+              offset="0%"
+              stop-color="#fff"
+              stop-opacity="1"
+            ></stop>
+            <stop
+              offset="100%"
+              stop-color="#fff"
+              stop-opacity="0"
+            ></stop>
+          </radialGradient>
+        </defs>
+        <!-- <rect x="5" y="5" width="390" height="390" fill="url(#test-radial-gradient)"></rect> -->
+        <circle
+          cx="200"
+          cy="200"
+          r="200"
+          fill="url(#test-radial-gradient)"
+        ></circle>
       </svg>
     </div>
   </div>
@@ -525,5 +634,9 @@ svg {
       stroke-dashoffset: 0;
     }
   }
+}
+
+.bg-gray {
+  background: #333;
 }
 </style>
