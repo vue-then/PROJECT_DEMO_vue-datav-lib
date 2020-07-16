@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="imooc-fly-box"
-    style="background: #333;"
-  >
+  <div class="imooc-fly-box" :ref="refName">
     <svg
       :width="width"
       :height="height"
@@ -10,7 +7,7 @@
       <defs>
         <path
           id="fly-box-path"
-          d="M5 5 L395 5 L395 395 L5 395 Z"
+          :d="path"
           fill="none"
         ></path>
         <radialGradient
@@ -41,7 +38,7 @@
           >
             <animateMotion
               :dur="dur"
-              path="M5 5 L395 5 L395 395 L5 395 Z"
+              :path="path"
               rotate="auto"
               repeatCount="indefinite"
             ></animateMotion>
@@ -60,24 +57,19 @@
         mask="url(#fly-box-mask)"
       ></use>
     </svg>
+    <div class="imooc-fly-box-content">
+      <slot></slot>
+    </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-import { computed } from 'vue'
+import { computed, ref, onMounted, getCurrentInstance } from 'vue'
 
 export default {
   name: 'ImoocFlyBox',
 
   props: {
-    width: {
-      type: [Number, String],
-      default: 400
-    },
-    height: {
-      type: [Number, String],
-      default: 400
-    },
     duration: {
       type: [Number, String],
       default: 3
@@ -85,14 +77,49 @@ export default {
   },
 
   setup(ctx) {
+    const width = ref(0)
+    const height = ref(0)
+    const refName= 'imoocFlyBox'
     const dur = computed(() => `${ctx.duration}s`)
+    const path = computed(() => `M5 5 L${width.value-5} 5 L${width.value-5} ${height.value-5} L5 ${height.value-5} Z`)
+
+    const init = () => {
+      const instance = getCurrentInstance()
+      const dom = instance.ctx.$refs[refName]
+      width.value = dom.clientWidth
+      height.value = dom.clientHeight
+    }
+
+    onMounted(() => {
+      init()
+    })
 
     return {
-      dur
+      dur,
+      width,
+      height,
+      refName,
+      path
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.imooc-fly-box {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+  .imooc-fly-box-content {
+    height: 100%;
+    width: 100%;
+  }
+}
 </style>
