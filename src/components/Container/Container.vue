@@ -23,11 +23,11 @@ export default {
     const height = ref(0)
     const originalWidth = ref(0)
     const originalHeight = ref(0)
+    const context = getCurrentInstance().ctx
+    let dom = null
 
-    onMounted(() => {
-      const context = getCurrentInstance().ctx
-      const dom = context.$refs[refName]
-      console.log("setup -> dom", dom)
+    const init = () => {
+      dom = context.$refs[refName]
 
       // 获取容器宽高
       if (ctx.options && ctx.options.width && ctx.options.height) {
@@ -37,15 +37,47 @@ export default {
         width.value = dom.clientWidth
         height.value = dom.clientHeight
       }
-      console.log('容器宽高', width.value, height.value)
+      
 
-      // 获取视口宽高
+      // 获取屏幕视口宽高
       if (!originalWidth.value || !originalHeight.value) {
         originalWidth.value = window.screen.width
         originalHeight.value = window.screen.height
       }
+      console.log("setup -> dom", dom)
+      console.log('容器宽高', width.value, height.value)
+      console.log('屏幕视口宽高', originalWidth.value, originalHeight.value)
+    }
 
-      console.log('视口宽高', originalWidth.value, originalHeight.value)
+    const updateSize = () => {
+      if(width.value && height.value) {
+        dom.style.width = `${width.value}px`
+        dom.style.height = `${height.value}px`
+      } else {
+        dom.style.width = `${originalWidth.value}px`
+        dom.style.height = `${originalHeight.value}px`
+      }
+    }
+
+    // 计算宽高压缩比
+    const updateScale = () => {
+      // 获取页面视口
+      const currentWidth = document.body.clientWidth
+      const currentHeight = document.body.clientHeight
+      console.log('页面视口宽高', currentWidth, currentHeight)
+      // 获取大屏最终的宽高
+      const realWidth = width.value || originalWidth.value
+      const realHeight = height.value || originalHeight.value
+
+      const widthScale = currentWidth / realWidth
+      const heightScale = currentHeight / realHeight
+      dom.style.transform = `scale(${widthScale}, ${heightScale})`
+    }
+
+    onMounted(() => {
+      init()
+      updateSize()
+      updateScale()
     })
 
     return {
@@ -56,4 +88,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#imooc-container {
+  background: green;
+  position: fixed;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 999;
+  transform-origin: left top;
+}
 </style>
