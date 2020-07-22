@@ -8,7 +8,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { ref, getCurrentInstance, onMounted, onUnmounted } from 'vue'
+import { ref, getCurrentInstance, onMounted, onUnmounted, nextTick } from 'vue'
+import { debounce } from '../../utils/index.js'
 
 export default {
   name: 'ImoocContainer',
@@ -27,26 +28,31 @@ export default {
     let dom = null
 
     const initSize = () => {
-      dom = context.$refs[refName]
+      return new Promise((resolve) => {
+        nextTick(() => {
+          dom = context.$refs[refName]
 
-      // 获取容器宽高
-      if (ctx.options && ctx.options.width && ctx.options.height) {
-        width.value = ctx.options.width
-        height.value = ctx.options.height
-      } else {
-        width.value = dom.clientWidth
-        height.value = dom.clientHeight
-      }
+          // 获取容器宽高
+          if (ctx.options && ctx.options.width && ctx.options.height) {
+            width.value = ctx.options.width
+            height.value = ctx.options.height
+          } else {
+            width.value = dom.clientWidth
+            height.value = dom.clientHeight
+          }
 
 
-      // 获取屏幕视口宽高
-      if (!originalWidth.value || !originalHeight.value) {
-        originalWidth.value = window.screen.width
-        originalHeight.value = window.screen.height
-      }
-      console.log("setup -> dom", dom)
-      console.log('容器宽高', width.value, height.value)
-      console.log('屏幕视口宽高', originalWidth.value, originalHeight.value)
+          // 获取屏幕视口宽高
+          if (!originalWidth.value || !originalHeight.value) {
+            originalWidth.value = window.screen.width
+            originalHeight.value = window.screen.height
+          }
+          console.log("setup -> dom", dom)
+          console.log('容器宽高', width.value, height.value)
+          console.log('屏幕视口宽高', originalWidth.value, originalHeight.value)
+          resolve()
+        })
+      })
     }
 
     const updateSize = () => {
@@ -74,21 +80,21 @@ export default {
       dom.style.transform = `scale(${widthScale}, ${heightScale})`
     }
 
-    const onResize = () => {
-      console.log('---');
-      initSize()
+    const onResize = async () => {
+      console.log('===');
+      await initSize()
       updateScale()
     }
 
-    onMounted(() => {
-      initSize()
+    onMounted(async () => {
+      await initSize()
       updateSize()
       updateScale()
-      window.addEventListener('resize', onResize)
+      window.addEventListener('resize', debounce(100, onResize))
     })
 
     onUnmounted(() => {
-      window.removeEventListener('resize', onResize)
+      window.removeEventListener('resize', debounce(100, onResize))
     })
 
     return {
