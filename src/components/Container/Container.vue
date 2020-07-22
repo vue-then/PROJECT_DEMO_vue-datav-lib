@@ -8,7 +8,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { ref, getCurrentInstance, onMounted } from 'vue'
+import { ref, getCurrentInstance, onMounted, onUnmounted } from 'vue'
 
 export default {
   name: 'ImoocContainer',
@@ -26,7 +26,7 @@ export default {
     const context = getCurrentInstance().ctx
     let dom = null
 
-    const init = () => {
+    const initSize = () => {
       dom = context.$refs[refName]
 
       // 获取容器宽高
@@ -37,7 +37,7 @@ export default {
         width.value = dom.clientWidth
         height.value = dom.clientHeight
       }
-      
+
 
       // 获取屏幕视口宽高
       if (!originalWidth.value || !originalHeight.value) {
@@ -50,7 +50,7 @@ export default {
     }
 
     const updateSize = () => {
-      if(width.value && height.value) {
+      if (width.value && height.value) {
         dom.style.width = `${width.value}px`
         dom.style.height = `${height.value}px`
       } else {
@@ -74,10 +74,21 @@ export default {
       dom.style.transform = `scale(${widthScale}, ${heightScale})`
     }
 
+    const onResize = () => {
+      console.log('---');
+      initSize()
+      updateScale()
+    }
+
     onMounted(() => {
-      init()
+      initSize()
       updateSize()
       updateScale()
+      window.addEventListener('resize', onResize)
+    })
+
+    onUnmounted(() => {
+      window.removeEventListener('resize', onResize)
     })
 
     return {
