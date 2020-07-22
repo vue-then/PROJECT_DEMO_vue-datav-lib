@@ -18,7 +18,8 @@ module.exports = {
       name: 'imoocDataV', // 模块名称
       format: 'umd', // 输出的模块协议
       globals: {
-        'vue': 'vue'
+        'vue': 'vue',
+        'crypto': 'crypto'
       }
     },
     {
@@ -28,10 +29,18 @@ module.exports = {
     }
   ],
   plugins: [
-    resolve(),
+    resolve({
+      preferBuiltins: true
+    }),
     commonjs(),
     babel({
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
+      runtimeHelpers: true,
+      plugins: [
+        ['@babel/transform-runtime', {
+          regenerator: true
+        }]
+      ]
     }),
     json(),
     vue(),
