@@ -133,4 +133,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.imooc-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
 </style>

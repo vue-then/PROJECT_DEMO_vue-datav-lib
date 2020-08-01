@@ -3,7 +3,10 @@
     id="imooc-container"
     :ref="refName"
   >
-    <slot></slot>
+    <template v-if="ready">
+      <slot></slot>
+    </template>
+    <!-- <button @click="changeStyle" :style="{'font-size':'100px'}">change</button> -->
   </div>
 </template>
 
@@ -25,7 +28,17 @@ export default {
     const originalWidth = ref(0)
     const originalHeight = ref(0)
     const context = getCurrentInstance().ctx
+    const ready = ref(false)
     let dom = null
+    let observer = null
+
+    // const style = ref({})
+    // const changeStyle = () => {
+    //   style.value = {
+    //     ...style.value,
+    //     height: '1000px'
+    //   }
+    // }
 
     const initSize = () => {
       return new Promise((resolve) => {
@@ -80,25 +93,51 @@ export default {
       dom.style.transform = `scale(${widthScale}, ${heightScale})`
     }
 
-    const onResize = async () => {
-      console.log('===');
+    // 阻止缩放
+    const onResize = async (e) => {
+      console.log('===', e);
       await initSize()
       updateScale()
     }
 
+    // 监听样式改变
+    const initMutationObserver = () => {
+      observer = new MutationObserver(onResize)
+      observer.observe(dom, {
+        attributes: true, // 是否监听属性
+        attributeFilter: ['style'], // 需要监听的属性
+        attributeOldValue: true // 会往回调函数传入一个对象
+      })
+    }
+
+    const removeMutationObserver = () => {
+      if(observer) {
+        observer.disconnect()
+        observer.takeRecords()
+        observer = null
+      }
+    }
+
     onMounted(async () => {
+      ready.value = false
       await initSize()
       updateSize()
       updateScale()
       window.addEventListener('resize', debounce(100, onResize))
+      initMutationObserver()
+      ready.value = true
     })
 
     onUnmounted(() => {
       window.removeEventListener('resize', debounce(100, onResize))
+      removeMutationObserver()
     })
 
     return {
-      refName
+      refName,
+      ready,
+      // style,
+      // changeStyle
     }
   }
 }
@@ -106,7 +145,6 @@ export default {
 
 <style lang="scss" scoped>
 #imooc-container {
-  background: green;
   position: fixed;
   top: 0;
   left: 0;
