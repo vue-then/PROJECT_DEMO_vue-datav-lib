@@ -48,5 +48,5 @@ module.exports = {
       plugins: []
     })
   ],
-  external: ['vue'] // 外部引用模块。即使有resolve插件也会被引入到外部
+  external: ['vue', 'echarts'] // 外部引用模块。即使有resolve插件也会被引入到外部
 }
