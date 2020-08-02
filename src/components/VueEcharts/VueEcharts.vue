@@ -20,7 +20,6 @@ export default {
     let dom
     let chart
     const className = `echarts${uuidv4()}`
-    console.log("setup -> className", className)
 
     const initChart = () => {
       if (!chart) {
