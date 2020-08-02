@@ -1,12 +1,12 @@
 <template>
-  <div class="echarts">
-    xx
+  <div :class="[className, 'echarts']">
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import { watch, onMounted } from 'vue'
 import Echarts from 'echarts' // rollup配置了外部引入echarts，所以无需npm安装echarts
+import {v4 as uuidv4} from 'uuid'
 
 export default {
   name: 'VueEcharts',
@@ -19,10 +19,12 @@ export default {
   setup(ctx) {
     let dom
     let chart
+    const className = `echarts${uuidv4()}`
+    console.log("setup -> className", className)
 
     const initChart = () => {
       if (!chart) {
-        dom = document.getElementsByClassName('echarts')[0]
+        dom = document.getElementsByClassName(className)[0]
         chart = Echarts.init(dom, ctx.theme)
       }
       chart.setOption(ctx.options)
@@ -36,7 +38,9 @@ export default {
       initChart()
     })
 
-
+    return {
+      className
+    }
   }
 }
 </script>
