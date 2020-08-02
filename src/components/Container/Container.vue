@@ -95,7 +95,6 @@ export default {
 
     // 阻止缩放
     const onResize = async (e) => {
-      console.log('===', e);
       await initSize()
       updateScale()
     }
