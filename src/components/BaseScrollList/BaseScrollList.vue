@@ -7,7 +7,9 @@
       class="base-scroll-list-header"
       :style="{
       backgroundColor: actualConfig.headerBg,
-      height: `${actualConfig.headerHeight}px`
+      height: `${actualConfig.headerHeight}px`,
+      fontSize: `${actualConfig.headerFontSize}px`,
+      color: actualConfig.headerColor
     }"
     >
       <div
@@ -16,6 +18,7 @@
         :key="`${headerItem}${i}`"
         :style="{width: `${columnWidths[i]}px`,...headerStyle[i]}"
         v-html="headerItem"
+        :align="aligns[i]"
       >
 
       </div>
@@ -25,7 +28,8 @@
       v-for="(rowData, rowIndex) in rowsData"
       :key="rowIndex"
       :style="{
-        height: `${rowHeights[rowIndex]}px`
+        height: `${rowHeights[rowIndex]}px`,
+        backgroundColor: rowIndex % 2 === 0 ? rowBg[1]: rowBg[0]
       }"
     >
       <div
@@ -33,7 +37,12 @@
         v-for="(colData, colIndex) in rowData"
         :key="`${colData}${colIndex}`"
         v-html="colData"
-        :style="{width: `${columnWidths[colIndex]}px`}"
+        :style="{
+          width: `${columnWidths[colIndex]}px`,
+          ...rowStyle[colIndex],
+          fontSize: `${actualConfig.rowFontSize}px`,
+          color: actualConfig.rowColor}"
+        :align="aligns[colIndex]"
       >
       </div>
     </div>
@@ -66,8 +75,22 @@ const defaultConfig = {
   },
   // 数据项,二维数组
   data: [],
-  // 每行显示的数据条数
-  rowNum: 10
+  // 每页显示的数据条数
+  rowNum: 10,
+  // 行样式
+  rowStyle: [],
+  // 行序号内容的样式
+  rowIndexStyle: {
+    width: '50px'
+  },
+  // 行背景
+  rowBg: [],
+  // 内容居中方式
+  aligns: [],
+  headerFontSize: 28,
+  rowFontSize: 28,
+  headerColor: '#fff',
+  rowColor: '#000'
 }
 
 export default {
@@ -86,17 +109,22 @@ export default {
     const id = `base-scroll-list-${uuidv4()}`
     const { width, height } = useScreen(id)
     const headerData = ref([])
-    const headerStyle = ref({})
+    const headerStyle = ref([])
+    const rowStyle = ref([])
+    const rowBg = ref([])
     const actualConfig = ref([])
     const columnWidths = ref([])
     const rowHeights = ref([])
     const rowsData = ref([])
     const rowNum = ref(defaultConfig.rowNum)
+    const aligns = ref([])
 
     const handleHeader = (config) => {
       const _headerData = cloneDeep(config.headerData)
       const _headerStyle = cloneDeep(config.headerStyle)
+      const _rowStyle = cloneDeep(config.rowStyle)
       const _rowsData = cloneDeep(config.data)
+      const _aligns = cloneDeep(config.aligns)
 
       if (_headerData.length === 0) {
         return
@@ -105,9 +133,11 @@ export default {
       if (config.headerIndex) {
         _headerData.unshift(config.headerIndexContent)
         _headerStyle.unshift(config.headerIndexStyle)
+        _rowStyle.unshift(config.rowIndexStyle)
         _rowsData.forEach((rows, index) => {
           rows.unshift(index + 1)
         })
+        _aligns.unshift('center')
       }
 
       // 动态计算header中每一列的宽度
@@ -133,8 +163,10 @@ export default {
       columnWidths.value = _columnWidths
       headerData.value = _headerData
       headerStyle.value = _headerStyle
+      rowStyle.value = _rowStyle
       rowsData.value = _rowsData
-      console.log("handleHeader -> rowsData.value", rowsData.value)
+      aligns.value = _aligns
+      console.log("handleHeader -> rowsData.value", aligns.value, _aligns)
     }
 
     const handleRows = (config) => {
@@ -144,14 +176,16 @@ export default {
       rowNum.value = config.rowNum
 
       // 如果rowNum大于实际数据长度，则以实际数据长度为准
-      if(rowNum.value > rowsData.value.length) {
+      if (rowNum.value > rowsData.value.length) {
         rowNum.value = rowsData.value.length
       }
       const avgHeight = unusedHeight / rowNum.value
-      console.log("handleRows -> rowNum.value", rowNum.value)
-
       rowHeights.value = new Array(rowNum.value).fill(avgHeight)
-      console.log("handleRows -> avgHeight", rowHeights.value)
+
+      // 获取行背景色
+      if (config.rowBg) {
+        rowBg.value = config.rowBg
+      }
     }
 
     onMounted(() => {
@@ -169,7 +203,10 @@ export default {
       actualConfig,
       columnWidths,
       rowsData,
-      rowHeights
+      rowHeights,
+      rowStyle,
+      rowBg,
+      aligns
     }
   }
 }
