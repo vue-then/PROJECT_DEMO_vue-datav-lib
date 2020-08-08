@@ -1,5 +1,5 @@
 <template>
-  <div class="icon-wrapper" :style="{...style}">
+  <div class="icon-wrapper">
     <svg
       class="icon"
     >
