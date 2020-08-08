@@ -14,7 +14,7 @@
         class="header-item base-scroll-list-text"
         v-for="(headerItem, i) in headerData"
         :key="`${headerItem}${i}`"
-        :style="headerStyle[i]"
+        :style="{width: `${columnWidths[i]}px`,...headerStyle[i]}"
         v-html="headerItem"
       >
 
@@ -63,8 +63,11 @@ export default {
       // 展示的序号内容
       headerIndexContent: '#',
       // 序号内容的样式
-      headerIndexStyle: {}
+      headerIndexStyle: {
+        width: '50px'
+      }
     }
+    const columnWidths = ref([])
 
     const handleHeader = (config) => {
       const _headerData = cloneDeep(config.headerData)
@@ -78,6 +81,23 @@ export default {
         _headerData.unshift(config.headerIndexContent)
         _headerStyle.unshift(config.headerIndexStyle)
       }
+
+      // 动态计算header中每一列的宽度
+      let usedWidth = 0
+      let usedColumnNum = 0
+      // 判断是否存在自定义width
+      _headerStyle.forEach(style => {
+        if(style.width) {
+          console.log("handleHeader -> style.width", style.width)
+          usedWidth += Number(style.width.replace('px', ''))
+          usedColumnNum++
+        }
+      })
+      // 动态计算列宽时，使用剩余未定义的宽度除以剩余的列数
+      const avgWidth = (width.value - usedWidth) / (_headerData.length- usedColumnNum)
+      const _columnWidths = new Array(_headerData.length).fill(avgWidth)
+      columnWidths.value = _columnWidths
+      console.log("handleHeader -> avgWidth", avgWidth, columnWidths.value)
 
       headerData.value = _headerData
       headerStyle.value = _headerStyle
@@ -93,7 +113,8 @@ export default {
       id,
       headerData,
       headerStyle,
-      actualConfig
+      actualConfig,
+      columnWidths
     }
   }
 }
@@ -114,7 +135,7 @@ export default {
     font-size: 15px;
     align-items: center;
     .header-item {
-      width: 150px;
+
     }
   }
 }
