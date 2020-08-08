@@ -16,7 +16,7 @@ export default {
     name: String,
     prefix: {
       type: String,
-      default: ''
+      default: 'icon'
     }
   },
 
