@@ -24,6 +24,9 @@
       class="base-scroll-list-rows"
       v-for="(rowData, rowIndex) in rowsData"
       :key="rowIndex"
+      :style="{
+        height: `${rowHeights[rowIndex]}px`
+      }"
     >
       <div
         class="base-scroll-list-columns"
@@ -62,7 +65,9 @@ const defaultConfig = {
     width: '50px'
   },
   // 数据项,二维数组
-  data: []
+  data: [],
+  // 每行显示的数据条数
+  rowNum: 10
 }
 
 export default {
@@ -84,7 +89,9 @@ export default {
     const headerStyle = ref({})
     const actualConfig = ref([])
     const columnWidths = ref([])
+    const rowHeights = ref([])
     const rowsData = ref([])
+    const rowNum = ref(defaultConfig.rowNum)
 
     const handleHeader = (config) => {
       const _headerData = cloneDeep(config.headerData)
@@ -132,13 +139,26 @@ export default {
 
     const handleRows = (config) => {
       // 动态计算每行数据的高度
+      const { headerHeight } = config
+      const unusedHeight = height.value - headerHeight
+      rowNum.value = config.rowNum
+
+      // 如果rowNum大于实际数据长度，则以实际数据长度为准
+      if(rowNum.value > rowsData.value.length) {
+        rowNum.value = rowsData.value.length
+      }
+      const avgHeight = unusedHeight / rowNum.value
+      console.log("handleRows -> rowNum.value", rowNum.value)
+
+      rowHeights.value = new Array(rowNum.value).fill(avgHeight)
+      console.log("handleRows -> avgHeight", rowHeights.value)
     }
 
     onMounted(() => {
       const _actualConfig = assign(defaultConfig, props.config)
       rowsData.value = _actualConfig.data || []
       handleHeader(_actualConfig)
-      handleRows(props.config)
+      handleRows(_actualConfig)
       actualConfig.value = _actualConfig
     })
 
@@ -148,7 +168,8 @@ export default {
       headerStyle,
       actualConfig,
       columnWidths,
-      rowsData
+      rowsData,
+      rowHeights
     }
   }
 }
@@ -174,6 +195,7 @@ export default {
 
   .base-scroll-list-rows {
     display: flex;
+    align-items: center;
     .base-scroll-list-columns {
       font-size: 28px;
     }
