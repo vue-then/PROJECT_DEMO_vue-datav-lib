@@ -7,6 +7,7 @@ import ImoocFlyBox from './components/ImoocFlyBox/index'
 import ImoocLogo from './components/ImoocLogo/index'
 import VueCountTo from './components/VueCountTo/index'
 import VueEcharts from './components/VueEcharts/index'
+import BaseScrollList from './components/BaseScrollList/index'
 import Container from './components/Container/index'
 
 export default function(Vue) {
@@ -18,5 +19,6 @@ export default function(Vue) {
   Vue.use(ImoocLogo)
   Vue.use(VueCountTo)
   Vue.use(VueEcharts)
+  Vue.use(BaseScrollList)
   Vue.use(Container)
 }
