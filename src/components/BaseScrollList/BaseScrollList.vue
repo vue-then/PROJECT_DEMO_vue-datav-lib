@@ -6,13 +6,13 @@
     <div
       class="base-scroll-list-header"
       :style="{
-      backgroundColor: headerBg,
-      height: `${headerHeight}px`
+      backgroundColor: actualConfig.headerBg,
+      height: `${actualConfig.headerHeight}px`
     }"
     >
       <div
         class="header-item base-scroll-list-text"
-        v-for="(headerItem, i) in header"
+        v-for="(headerItem, i) in headerData"
         :key="`${headerItem}${i}`"
         :style="headerStyle[i]"
         v-html="headerItem"
@@ -25,60 +25,75 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import useScreen from '../../hooks/useScreen'
 import cloneDeep from 'lodash/cloneDeep'
+import assign from 'lodash/assign'
 
 export default {
   name: 'BaseScrollList',
 
   props: {
-    // 标题数据
-    header: Array,
-    // 标题样式
-    headerStyle: Array,
-    // 标题背景
-    headerBg: {
-      type: String,
-      default: 'rgb(90,90,90)'
-    },
-    // 标题高度
-    headerHeight: {
-      type: [String, Number],
-      default: '35'
-    },
-    // 标题是否展示序号
-    headerIndex: {
-      type: Boolean,
-      default: false
+    config: {
+      type: Object,
+      default: () => {
+        return {}
+      }
     }
   },
 
   setup(props) {
     const id = `base-scroll-list-${uuidv4()}`
     const { width, height } = useScreen(id)
+    const headerData = ref([])
+    const headerStyle = ref({})
+    const actualConfig = ref([])
+    const defaultConfig = {
+      // 标题数据
+      headerData: [],
+      // 标题样式
+      headerStyle: [],
+      // 标题背景
+      headerBg: 'rgb(90,90,90)',
+      // 标题高度
+      headerHeight: '35',
+      // 标题是否展示序号
+      headerIndex: false,
+      // 展示的序号内容
+      headerIndexContent: '#',
+      // 序号内容的样式
+      headerIndexStyle: {}
+    }
 
-    const handleHeader = () => {
-      const headerData = cloneDeep(props.header)
-      console.log("handleHeader -> headerData", headerData)
+    const handleHeader = (config) => {
+      const _headerData = cloneDeep(config.headerData)
+      const _headerStyle = cloneDeep(config.headerStyle)
 
-      if(props.header.length === 0) {
+      if (_headerData.length === 0) {
         return
       }
 
-      if(props.headerIndex) {
-
+      if (config.headerIndex) {
+        _headerData.unshift(config.headerIndexContent)
+        _headerStyle.unshift(config.headerIndexStyle)
       }
+
+      headerData.value = _headerData
+      headerStyle.value = _headerStyle
     }
 
     onMounted(() => {
-      console.log(props.headerIndex, width, height);
-      handleHeader()
+      const _actualConfig = assign(defaultConfig, props.config)
+      handleHeader(_actualConfig)
+      actualConfig.value = _actualConfig
     })
 
     return {
-      id
+      id,
+      headerData,
+      headerStyle,
+      actualConfig
     }
   }
 }
