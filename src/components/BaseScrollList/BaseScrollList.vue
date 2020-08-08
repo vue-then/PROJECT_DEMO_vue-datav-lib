@@ -1,5 +1,8 @@
 <template>
-  <div class="base-scroll-list">
+  <div
+    class="base-scroll-list"
+    :id="id"
+  >
     <div
       class="base-scroll-list-header"
       :style="{
@@ -22,6 +25,11 @@
 </template>
 
 <script type="text/ecmascript-6">
+import { onMounted } from 'vue'
+import { v4 as uuidv4 } from 'uuid'
+import useScreen from '../../hooks/useScreen'
+import cloneDeep from 'lodash/cloneDeep'
+
 export default {
   name: 'BaseScrollList',
 
@@ -39,6 +47,38 @@ export default {
     headerHeight: {
       type: [String, Number],
       default: '35'
+    },
+    // 标题是否展示序号
+    headerIndex: {
+      type: Boolean,
+      default: false
+    }
+  },
+
+  setup(props) {
+    const id = `base-scroll-list-${uuidv4()}`
+    const { width, height } = useScreen(id)
+
+    const handleHeader = () => {
+      const headerData = cloneDeep(props.header)
+      console.log("handleHeader -> headerData", headerData)
+
+      if(props.header.length === 0) {
+        return
+      }
+
+      if(props.headerIndex) {
+
+      }
+    }
+
+    onMounted(() => {
+      console.log(props.headerIndex, width, height);
+      handleHeader()
+    })
+
+    return {
+      id
     }
   }
 }
@@ -46,6 +86,7 @@ export default {
 
 <style lang="scss" scoped>
 .base-scroll-list {
+  height: 100%;
   .base-scroll-list-text {
     white-space: nowrap;
     overflow: hidden;
