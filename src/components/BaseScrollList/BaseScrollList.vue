@@ -31,23 +31,24 @@
     >
       <div
         class="base-scroll-list-rows"
-        v-for="(rowData, rowIndex) in currentRowsData"
-        :key="rowIndex"
+        v-for="(rowData, index) in currentRowsData"
+        :key="rowData.rowIndex"
         :style="{
-        height: `${rowHeights[rowIndex]}px`,
-        backgroundColor: rowIndex % 2 === 0 ? rowBg[1]: rowBg[0]
+        height: `${rowHeights[index]}px`,
+        lineHeight: `${rowHeights[index]}px`,
+        backgroundColor: rowData.rowIndex % 2 === 0 ? rowBg[1]: rowBg[0],
+        fontSize: `${actualConfig.rowFontSize}px`,
+        color: actualConfig.rowColor
       }"
       >
         <div
           class="base-scroll-list-columns"
-          v-for="(colData, colIndex) in rowData"
+          v-for="(colData, colIndex) in rowData.data"
           :key="`${colData}${colIndex}`"
           v-html="colData"
           :style="{
           width: `${columnWidths[colIndex]}px`,
-          ...rowStyle[colIndex],
-          fontSize: `${actualConfig.rowFontSize}px`,
-          color: actualConfig.rowColor}"
+          ...rowStyle[colIndex]}"
           :align="aligns[colIndex]"
         >
         </div>
@@ -130,6 +131,7 @@ export default {
     const rowNum = ref(defaultConfig.rowNum)
     const aligns = ref([])
 
+    let avgHeight
     const handleHeader = (config) => {
       const _headerData = cloneDeep(config.headerData)
       const _headerStyle = cloneDeep(config.headerStyle)
@@ -175,7 +177,10 @@ export default {
       headerData.value = _headerData
       headerStyle.value = _headerStyle
       rowStyle.value = _rowStyle
-      rowsData.value = _rowsData
+      rowsData.value = _rowsData.map((item, index) => ({
+        data: item,
+        rowIndex: index
+      }))
       aligns.value = _aligns
       console.log("handleHeader -> rowsData.value", aligns.value, _aligns)
     }
@@ -190,7 +195,7 @@ export default {
       if (rowNum.value > rowsData.value.length) {
         rowNum.value = rowsData.value.length
       }
-      const avgHeight = unusedHeight / rowNum.value
+      avgHeight = unusedHeight / rowNum.value
       rowHeights.value = new Array(rowNum.value).fill(avgHeight)
 
       // 获取行背景色
@@ -218,14 +223,24 @@ export default {
       rows.push(..._rowsData.slice(0, index))
       currentRowsData.value = rows
 
+      // 先将所有行的高度还原
+      rowHeights.value = new Array(totalLength).fill(avgHeight)
+      const waitTime = 300
+      await new Promise(resolve => setTimeout(resolve, waitTime))
+      console.log("startAnimation -> rowHeights.value", rowHeights.value)
+
+      // 将moveNum的行高度设置0
+      // 这里splice将指定元素删除并替换
+      rowHeights.value.splice(0, moveNum, ...new Array(moveNum).fill(0))
+
       currentIndex.value += moveNum
       // 判断是否到达最后一组数据
       const isLast = currentIndex.value - totalLength
-      if(isLast >= 0) {
+      if (isLast >= 0) {
         currentIndex.value = isLast
       }
       // 让线程sleep
-      await new Promise(resolve => setTimeout(resolve, duration))
+      await new Promise(resolve => setTimeout(resolve, duration - waitTime))
       await startAnimation()
     }
 
@@ -282,6 +297,7 @@ export default {
     .base-scroll-list-rows {
       display: flex;
       align-items: center;
+      transition: all 0.3s linear;
       .base-scroll-list-columns {
         font-size: 28px;
       }
