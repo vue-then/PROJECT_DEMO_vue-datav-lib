@@ -42,7 +42,7 @@
       }"
       >
         <div
-          class="base-scroll-list-columns"
+          class="base-scroll-list-columns base-scroll-list-text"
           v-for="(colData, colIndex) in rowData.data"
           :key="`${colData}${colIndex}`"
           v-html="colData"
@@ -177,12 +177,21 @@ export default {
       headerData.value = _headerData
       headerStyle.value = _headerStyle
       rowStyle.value = _rowStyle
-      rowsData.value = _rowsData.map((item, index) => ({
-        data: item,
-        rowIndex: index
-      }))
       aligns.value = _aligns
-      console.log("handleHeader -> rowsData.value", aligns.value, _aligns)
+      const { rowNum } = config
+      if (_rowsData.length >= rowNum && _rowsData.length < rowNum * 2) {
+        const newRowData = [..._rowsData, ..._rowsData]
+        rowsData.value = newRowData.map((item, index) => ({
+          data: item,
+          rowIndex: index
+        }))
+      } else {
+        rowsData.value = _rowsData.map((item, index) => ({
+          data: item,
+          rowIndex: index
+        }))
+      }
+
     }
 
     const handleRows = (config) => {
@@ -227,7 +236,6 @@ export default {
       rowHeights.value = new Array(totalLength).fill(avgHeight)
       const waitTime = 300
       await new Promise(resolve => setTimeout(resolve, waitTime))
-      console.log("startAnimation -> rowHeights.value", rowHeights.value)
 
       // 将moveNum的行高度设置0
       // 这里splice将指定元素删除并替换
