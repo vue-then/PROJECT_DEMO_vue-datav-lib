@@ -24,26 +24,33 @@
       </div>
     </div>
     <div
-      class="base-scroll-list-rows"
-      v-for="(rowData, rowIndex) in rowsData"
-      :key="rowIndex"
+      class="base-scroll-list-rows-wrapper"
       :style="{
+      height: `${height-actualConfig.headerHeight}px`
+    }"
+    >
+      <div
+        class="base-scroll-list-rows"
+        v-for="(rowData, rowIndex) in currentRowsData"
+        :key="rowIndex"
+        :style="{
         height: `${rowHeights[rowIndex]}px`,
         backgroundColor: rowIndex % 2 === 0 ? rowBg[1]: rowBg[0]
       }"
-    >
-      <div
-        class="base-scroll-list-columns"
-        v-for="(colData, colIndex) in rowData"
-        :key="`${colData}${colIndex}`"
-        v-html="colData"
-        :style="{
+      >
+        <div
+          class="base-scroll-list-columns"
+          v-for="(colData, colIndex) in rowData"
+          :key="`${colData}${colIndex}`"
+          v-html="colData"
+          :style="{
           width: `${columnWidths[colIndex]}px`,
           ...rowStyle[colIndex],
           fontSize: `${actualConfig.rowFontSize}px`,
           color: actualConfig.rowColor}"
-        :align="aligns[colIndex]"
-      >
+          :align="aligns[colIndex]"
+        >
+        </div>
       </div>
     </div>
   </div>
@@ -90,7 +97,9 @@ const defaultConfig = {
   headerFontSize: 28,
   rowFontSize: 28,
   headerColor: '#fff',
-  rowColor: '#000'
+  rowColor: '#000',
+  moveNum: 1, // 每次移动几条数据的位置
+  duration: 2000 // 动画间隔
 }
 
 export default {
@@ -116,6 +125,8 @@ export default {
     const columnWidths = ref([])
     const rowHeights = ref([])
     const rowsData = ref([])
+    const currentRowsData = ref([])
+    const currentIndex = ref(0) // 动画指针
     const rowNum = ref(defaultConfig.rowNum)
     const aligns = ref([])
 
@@ -188,12 +199,46 @@ export default {
       }
     }
 
+    const startAnimation = async () => {
+      const config = actualConfig.value
+      const { data, rowNum, moveNum, duration } = config
+      const totalLength = data.length
+
+      if (totalLength < rowNum) {
+        return
+      }
+
+      const index = currentIndex.value
+      const _rowsData = cloneDeep(rowsData.value)
+      // 将数据重新收尾拼接
+      // [a,b,c,d,e,f,g]
+      //    1
+      // [b,c,d,e,f,g,a]
+      const rows = _rowsData.slice(index)
+      rows.push(..._rowsData.slice(0, index))
+      currentRowsData.value = rows
+
+      currentIndex.value += moveNum
+      // 判断是否到达最后一组数据
+      const isLast = currentIndex.value - totalLength
+      if(isLast >= 0) {
+        currentIndex.value = isLast
+      }
+      // 让线程sleep
+      await new Promise(resolve => setTimeout(resolve, duration))
+      await startAnimation()
+    }
+
     onMounted(() => {
       const _actualConfig = assign(defaultConfig, props.config)
       rowsData.value = _actualConfig.data || []
+
       handleHeader(_actualConfig)
       handleRows(_actualConfig)
+
       actualConfig.value = _actualConfig
+
+      startAnimation()
     })
 
     return {
@@ -206,7 +251,9 @@ export default {
       rowHeights,
       rowStyle,
       rowBg,
-      aligns
+      aligns,
+      currentRowsData,
+      height
     }
   }
 }
@@ -230,11 +277,14 @@ export default {
     }
   }
 
-  .base-scroll-list-rows {
-    display: flex;
-    align-items: center;
-    .base-scroll-list-columns {
-      font-size: 28px;
+  .base-scroll-list-rows-wrapper {
+    overflow: hidden;
+    .base-scroll-list-rows {
+      display: flex;
+      align-items: center;
+      .base-scroll-list-columns {
+        font-size: 28px;
+      }
     }
   }
 }
