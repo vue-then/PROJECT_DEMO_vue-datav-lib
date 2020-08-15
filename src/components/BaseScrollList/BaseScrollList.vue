@@ -26,20 +26,20 @@
     <div
       class="base-scroll-list-rows-wrapper"
       :style="{
-      height: `${height-actualConfig.headerHeight}px`
-    }"
+        height: `${height-actualConfig.headerHeight}px`
+      }"
     >
       <div
         class="base-scroll-list-rows"
         v-for="(rowData, index) in currentRowsData"
         :key="rowData.rowIndex"
         :style="{
-        height: `${rowHeights[index]}px`,
-        lineHeight: `${rowHeights[index]}px`,
-        backgroundColor: rowData.rowIndex % 2 === 0 ? rowBg[1]: rowBg[0],
-        fontSize: `${actualConfig.rowFontSize}px`,
-        color: actualConfig.rowColor
-      }"
+          height: `${rowHeights[index]}px`,
+          lineHeight: `${rowHeights[index]}px`,
+          backgroundColor: rowData.rowIndex % 2 === 0 ? rowBg[1]: rowBg[0],
+          fontSize: `${actualConfig.rowFontSize}px`,
+          color: actualConfig.rowColor
+        }"
       >
         <div
           class="base-scroll-list-columns base-scroll-list-text"
@@ -47,8 +47,9 @@
           :key="`${colData}${colIndex}`"
           v-html="colData"
           :style="{
-          width: `${columnWidths[colIndex]}px`,
-          ...rowStyle[colIndex]}"
+            width: `${columnWidths[colIndex]}px`,
+            ...rowStyle[colIndex]
+          }"
           :align="aligns[colIndex]"
         >
         </div>
@@ -81,6 +82,8 @@ const defaultConfig = {
   headerIndexStyle: {
     width: '50px'
   },
+  // 序号列数据内容
+  headerIndexData: [],
   // 数据项,二维数组
   data: [],
   // 每页显示的数据条数
@@ -149,7 +152,12 @@ export default {
         _headerStyle.unshift(config.headerIndexStyle)
         _rowStyle.unshift(config.rowIndexStyle)
         _rowsData.forEach((rows, index) => {
-          rows.unshift(index + 1)
+          // 处理序号列数据
+          if (config.headerIndexData && config.headerIndexData.length > 0 && config.headerIndexData[index]) {
+            rows.unshift(config.headerIndexData[index])
+          } else {
+            rows.unshift(index + 1)
+          }
         })
         _aligns.unshift('center')
       }
@@ -215,7 +223,7 @@ export default {
     }
 
     const startAnimation = async () => {
-      if(!isAnimationStart.value) {
+      if (!isAnimationStart.value) {
         return
       }
       const config = actualConfig.value
@@ -239,7 +247,7 @@ export default {
       // 先将所有行的高度还原
       rowHeights.value = new Array(totalLength).fill(avgHeight)
       const waitTime = 300
-      if(!isAnimationStart.value) {
+      if (!isAnimationStart.value) {
         return
       }
       await new Promise(resolve => setTimeout(resolve, waitTime))
@@ -255,7 +263,7 @@ export default {
         currentIndex.value = isLast
       }
       // 让线程sleep
-      if(!isAnimationStart.value) {
+      if (!isAnimationStart.value) {
         return
       }
       await new Promise(resolve => setTimeout(resolve, duration - waitTime))
@@ -309,7 +317,6 @@ export default {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 0 10px;
     box-sizing: border-box;
   }
   .base-scroll-list-header {
@@ -327,7 +334,7 @@ export default {
       align-items: center;
       transition: all 0.3s linear;
       .base-scroll-list-columns {
-        font-size: 28px;
+        height: 100%;
       }
     }
   }
