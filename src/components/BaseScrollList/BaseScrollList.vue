@@ -58,7 +58,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-import { onMounted, ref } from 'vue'
+import { watch, ref } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import useScreen from '../../hooks/useScreen'
 import cloneDeep from 'lodash/cloneDeep'
@@ -130,6 +130,7 @@ export default {
     const currentIndex = ref(0) // 动画指针
     const rowNum = ref(defaultConfig.rowNum)
     const aligns = ref([])
+    const isAnimationStart = ref(true)
 
     let avgHeight
     const handleHeader = (config) => {
@@ -214,9 +215,12 @@ export default {
     }
 
     const startAnimation = async () => {
+      if(!isAnimationStart.value) {
+        return
+      }
       const config = actualConfig.value
-      const { data, rowNum, moveNum, duration } = config
-      const totalLength = data.length
+      const { rowNum, moveNum, duration } = config
+      const totalLength = rowsData.value.length
 
       if (totalLength < rowNum) {
         return
@@ -235,6 +239,9 @@ export default {
       // 先将所有行的高度还原
       rowHeights.value = new Array(totalLength).fill(avgHeight)
       const waitTime = 300
+      if(!isAnimationStart.value) {
+        return
+      }
       await new Promise(resolve => setTimeout(resolve, waitTime))
 
       // 将moveNum的行高度设置0
@@ -248,11 +255,19 @@ export default {
         currentIndex.value = isLast
       }
       // 让线程sleep
+      if(!isAnimationStart.value) {
+        return
+      }
       await new Promise(resolve => setTimeout(resolve, duration - waitTime))
       await startAnimation()
     }
 
-    onMounted(() => {
+    const stopAnimation = () => {
+      isAnimationStart.value = false
+    }
+
+    const update = () => {
+      stopAnimation()
       const _actualConfig = assign(defaultConfig, props.config)
       rowsData.value = _actualConfig.data || []
 
@@ -260,8 +275,13 @@ export default {
       handleRows(_actualConfig)
 
       actualConfig.value = _actualConfig
-
+      // 展示动画
+      isAnimationStart.value = true
       startAnimation()
+    }
+
+    watch(() => props.config, () => {
+      update()
     })
 
     return {
