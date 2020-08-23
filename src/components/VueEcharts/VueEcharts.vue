@@ -26,7 +26,7 @@ export default {
         dom = document.getElementsByClassName(className)[0]
         chart = Echarts.init(dom, ctx.theme)
       }
-      chart.setOption(ctx.options)
+      ctx.options && chart.setOption(ctx.options)
     }
 
     onMounted(() => {
