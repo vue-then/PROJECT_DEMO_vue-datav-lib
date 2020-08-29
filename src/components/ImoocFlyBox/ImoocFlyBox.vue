@@ -140,7 +140,7 @@ export default {
   .imooc-fly-box-content {
     height: 100%;
     width: 100%;
-    padding: 5px;
+    padding: 2px;
     box-sizing: border-box;
   }
 }
