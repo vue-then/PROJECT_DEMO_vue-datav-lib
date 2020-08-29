@@ -1,6 +1,7 @@
 {
   "name": "datav-libs-dev",
   "version": "1.0.0",
+  "private": false,
   "description": "慕课网数据可视化组件库",
   "main": "dist/imooc.datav.js",
   "files": [
@@ -17,8 +18,12 @@
     "vue",
     "datav"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:IFreeOvO/PROJECT_DEMO_vue-datav-lib.git"
+  },
   "author": "ifreeOvO",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.10.3",
     "@babel/node": "^7.10.3",

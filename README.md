@@ -1,6 +1,11 @@
 # 简介
 数据大屏组件库
 
+### 安装组件库
+```
+npm i datav-libs-dev
+```
+
 ## 运行项目
 ```
 npm install
