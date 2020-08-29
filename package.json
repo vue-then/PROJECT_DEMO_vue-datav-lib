@@ -1,6 +1,6 @@
 {
   "name": "datav-libs-dev",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "private": false,
   "description": "慕课网数据可视化组件库",
   "main": "dist/imooc.datav.js",
