@@ -27,8 +27,8 @@
       const initSize = () => {
         return new Promise((resolve) => {
           nextTick(() => {
-            console.log('打印---', context);
-            dom = context.$refs[refName]
+            console.log('打印---', context, document.getElementById('imooc-container'));
+            dom = document.getElementById('imooc-container')
             // 获取大屏的真实尺寸
             if (ctx.options && ctx.options.width && ctx.options.height) {
               width.value = ctx.options.width

@@ -1,5 +1,5 @@
 <template>
-  <div class="imooc-fly-box" :ref="refName">
+  <div class="imooc-fly-box" :ref="refName" id="imooc-fly-box">
     <svg
       :width="width"
       :height="height"
@@ -102,7 +102,7 @@ export default {
 
     const init = () => {
       const instance = getCurrentInstance()
-      const dom = instance.ctx.$refs[refName]
+      const dom = document.getElementById('imooc-fly-box')
       width.value = dom.clientWidth
       height.value = dom.clientHeight
     }
